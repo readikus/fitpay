@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+:root {
+  --violet: #7C3AED;
+  --violet-dark: #5B21B6;
+  --violet-light: #EDE9FE;
+  --violet-50: #F5F3FF;
+  --cream: #FDFBF7;
+  --warm: #F7F5F0;
+  --text: #1A1814;
+  --mid: #4A4640;
+  --muted: #8C857A;
+  --amber: #D97706;
+  --amber-light: #FEF3C7;
+  --green: #16A34A;
+  --green-light: #F0FDF4;
+  --border: #E8E3DA;
+  --white: #FFFFFF;
+  --radius: 14px;
+  --background: #FDFBF7;
+  --foreground: #1A1814;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-violet: var(--violet);
+  --color-violet-dark: var(--violet-dark);
+  --color-violet-light: var(--violet-light);
+  --color-violet-50: var(--violet-50);
+  --color-cream: var(--cream);
+  --color-warm: var(--warm);
+  --color-text: var(--text);
+  --color-mid: var(--mid);
+  --color-muted: var(--muted);
+  --color-amber: var(--amber);
+  --color-amber-light: var(--amber-light);
+  --color-green: var(--green);
+  --color-green-light: var(--green-light);
+  --color-border: var(--border);
+  --font-sans: var(--font-dm-sans), 'DM Sans', sans-serif;
+  --font-serif: var(--font-fraunces), 'Fraunces', serif;
+}
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: var(--font-dm-sans), 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}

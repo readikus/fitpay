@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>FitPay - Coach Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{color-scheme:light}body{font-family:'DM Sans',sans-serif;background:#F7F5F2;color:#1A1814}button,input,select,textarea{font-family:'DM Sans',sans-serif}input:focus,select:focus{outline:2px solid #7C3AED;outline-offset:-1px}@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState}=React;
+const C={bg:"#F7F5F2",card:"#FFFFFF",surface:"#F0EDE8",border:"#E8E3DA",text:"#1A1814",mid:"#4A4640",muted:"#8C857A",violet:"#7C3AED",violetLight:"#EDE9FE",violetDark:"#5B21B6",violet50:"#F5F3FF",amber:"#D97706",amberLight:"#FEF3C7",green:"#16A34A",greenLight:"#F0FDF4",red:"#DC2626",redLight:"#FEF2F2"};
+
+const seedProgrammes=[
+  {id:1,name:"12-Week Fat Loss",baseFee:700,bonusPot:200,duration:12,milestones:["Weekly check-in photos","3+ training sessions/week","Complete food diary"],active:true},
+  {id:2,name:"Strength & Muscle",baseFee:600,bonusPot:150,duration:12,milestones:["Attend all sessions","Complete strength tests week 1 and 12"],active:true},
+  {id:3,name:"8-Week Health Reset",baseFee:450,bonusPot:100,duration:8,milestones:["Weekly weigh-in","Submit 5 meal photos/week"],active:true},
+];
+const seedClients=[
+  {id:1,name:"Tom Bradley",email:"tom@email.com",progId:1,week:8,status:"active",paid:700,bonusStatus:"on-track",checkins:7,initials:"TB",startDate:"2026-01-13"},
+  {id:2,name:"Jess Morgan",email:"jess@email.com",progId:1,week:10,status:"active",paid:700,bonusStatus:"on-track",checkins:9,initials:"JM",startDate:"2026-01-06"},
+  {id:3,name:"Alex Turner",email:"alex@email.com",progId:2,week:5,status:"active",paid:400,bonusStatus:"at-risk",checkins:3,initials:"AT",startDate:"2026-02-03"},
+  {id:4,name:"Rachel Kim",email:"rachel@email.com",progId:1,week:12,status:"completed",paid:700,bonusStatus:"released",checkins:11,initials:"RK",startDate:"2025-12-16"},
+  {id:5,name:"Dan Wells",email:"dan@email.com",progId:3,week:3,status:"active",paid:275,bonusStatus:"on-track",checkins:3,initials:"DW",startDate:"2026-02-17"},
+  {id:6,name:"Priya Shah",email:"priya@email.com",progId:2,week:1,status:"active",paid:0,bonusStatus:"pending",checkins:0,initials:"PS",startDate:"2026-03-10"},
+];
+
+const Avatar=({i,s=34,c})=>React.createElement("div",{style:{width:s,height:s,borderRadius:10,background:c||"linear-gradient(135deg,#7C3AED,#A78BFA)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:s*.35,fontWeight:700,color:"#fff",flexShrink:0}},i);
+const Badge=({status:st})=>{const m={active:{b:C.greenLight,c:C.green,l:"Active"},"on-track":{b:C.greenLight,c:C.green,l:"On track"},"at-risk":{b:C.amberLight,c:C.amber,l:"At risk"},released:{b:"#EDE9FE",c:C.violet,l:"Released"},pending:{b:C.surface,c:C.muted,l:"Pending"},completed:{b:"#EDE9FE",c:C.violet,l:"Completed"},draft:{b:C.surface,c:C.muted,l:"Draft"},paid:{b:C.greenLight,c:C.green,l:"Paid"},overdue:{b:C.redLight,c:C.red,l:"Overdue"}};const s=m[st]||{b:C.surface,c:C.muted,l:st};return React.createElement("span",{style:{background:s.b,color:s.c,padding:"3px 10px",borderRadius:20,fontSize:11,fontWeight:600,whiteSpace:"nowrap"}},s.l)};
+const BackBtn=({onClick:o,label:l})=>React.createElement("button",{onClick:o,style:{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:C.violet,fontSize:14,fontWeight:600,cursor:"pointer",padding:"8px 0",marginBottom:12}},"\u2039 ",l);
+const Cd=({children:ch,style:s,...p})=>React.createElement("div",{style:{background:C.card,borderRadius:14,border:`1px solid ${C.border}`,boxShadow:"0 1px 3px rgba(0,0,0,0.04)",...s},...p},ch);
+const Btn=({primary:pr,small:sm,children:ch,...p})=>React.createElement("button",{...p,style:{background:pr?C.violet:"transparent",color:pr?"#fff":C.violet,border:pr?"none":`2px solid ${C.violet}`,borderRadius:10,padding:sm?"7px 14px":"12px 22px",fontSize:sm?12:14,fontWeight:600,cursor:"pointer",...(p.style||{})}},ch);
+const StatCard=({label:l,value:v,accent:a,sub:s})=>React.createElement("div",{style:{background:C.card,borderRadius:12,padding:"14px 16px",borderLeft:`3px solid ${a}`,flex:1,minWidth:130,boxShadow:"0 1px 3px rgba(0,0,0,0.04)"}},React.createElement("div",{style:{fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:.8,marginBottom:2}},l),React.createElement("div",{style:{fontSize:22,fontWeight:700}},v),s&&React.createElement("div",{style:{fontSize:10,color:C.muted,marginTop:1}},s));
+const ListRow=({left:le,title:t,sub:su,right:r,badge:b,onClick:o})=>React.createElement("button",{onClick:o,style:{display:"flex",alignItems:"center",gap:10,padding:"13px 16px",width:"100%",border:"none",borderBottom:`1px solid ${C.border}`,background:C.card,cursor:o?"pointer":"default",textAlign:"left"}},le,React.createElement("div",{style:{flex:1,minWidth:0}},React.createElement("div",{style:{fontSize:13,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}},t),su&&React.createElement("div",{style:{fontSize:11,color:C.muted}},su)),r&&React.createElement("div",{style:{textAlign:"right",marginRight:4}},r),b,o&&React.createElement("span",{style:{color:C.muted,fontSize:18}},"\u203a"));
+const TabBar=({tabs:ts,active:a,onSelect:o})=>React.createElement("div",{style:{display:"flex",borderBottom:`2px solid ${C.border}`,overflowX:"auto",background:C.card}},ts.map(t=>React.createElement("button",{key:t.id,onClick:()=>o(t.id),style:{padding:"11px 14px",border:"none",borderBottom:a===t.id?`2px solid ${C.violet}`:"2px solid transparent",background:"none",color:a===t.id?C.violet:C.muted,fontSize:13,fontWeight:a===t.id?700:500,cursor:"pointer",whiteSpace:"nowrap",marginBottom:-2}},t.icon," ",t.label)));
+const Field=({label:l,children:ch})=>React.createElement("div",{style:{marginBottom:14}},React.createElement("div",{style:{fontSize:11,color:C.muted,fontWeight:600,textTransform:"uppercase",letterSpacing:.5,marginBottom:4}},l),ch);
+const Inp=p=>React.createElement("input",{...p,style:{width:"100%",padding:"10px 12px",borderRadius:8,border:`1px solid ${C.border}`,fontSize:14,background:C.card,...(p.style||{})}});
+const Toast=({message:m,onClose:o})=>React.createElement("div",{style:{position:"fixed",bottom:20,left:"50%",transform:"translateX(-50%)",background:C.violetDark,color:"#fff",padding:"12px 24px",borderRadius:12,fontSize:13,fontWeight:600,boxShadow:"0 8px 30px rgba(0,0,0,0.15)",zIndex:999,display:"flex",alignItems:"center",gap:10,animation:"fadeUp 0.3s ease-out"}},"\u2713 ",m,React.createElement("button",{onClick:o,style:{background:"none",border:"none",color:"rgba(255,255,255,0.7)",cursor:"pointer",fontSize:16,marginLeft:8}},"\u00d7"));
+
+const ProgBar=({current:c,total:t,color:cl})=>{const pct=Math.min(100,Math.round(c/t*100));return React.createElement("div",{style:{display:"flex",alignItems:"center",gap:8}},React.createElement("div",{style:{flex:1,height:6,borderRadius:3,background:C.surface,overflow:"hidden"}},React.createElement("div",{style:{width:`${pct}%`,height:"100%",borderRadius:3,background:cl||C.violet}})),React.createElement("span",{style:{fontSize:11,color:C.muted,minWidth:32}},`${pct}%`))};
+
+window.__App=function App(){
+  const[tab,setTab]=useState("home");
+  const[programmes]=useState(seedProgrammes);
+  const[clients,setClients]=useState(seedClients);
+  const[screen,setScreen]=useState(null);
+  const[selectedId,setSelectedId]=useState(null);
+  const[toast,setToast]=useState(null);
+  const showToast=m=>{setToast(m);setTimeout(()=>setToast(null),3000)};
+  const nav=(t,s,id)=>{setTab(t);setScreen(s||null);setSelectedId(id||null)};
+  const tabs=[{id:"home",label:"Home",icon:"\ud83d\udcca"},{id:"programmes",label:"Programmes",icon:"\ud83c\udfcb\ufe0f"},{id:"clients",label:"Clients",icon:"\ud83d\udc65"},{id:"bonus",label:"Bonus pots",icon:"\ud83c\udfc6"},{id:"account",label:"Account",icon:"\ud83d\udc64"}];
+
+  const activeClients=clients.filter(c=>c.status==="active");
+  const totalRevenue=clients.reduce((s,c)=>s+c.paid,0);
+  const bonusPending=clients.filter(c=>c.bonusStatus==="on-track").length;
+  const bonusReleased=clients.filter(c=>c.bonusStatus==="released").reduce((s,c)=>{const p=programmes.find(pr=>pr.id===c.progId);return s+(p?p.bonusPot:0)},0);
+
+  function Home(){
+    return React.createElement("div",null,
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:10,marginBottom:20}},
+        React.createElement(StatCard,{label:"Active clients",value:activeClients.length,accent:C.violet,sub:`${clients.filter(c=>c.status==="completed").length} completed`}),
+        React.createElement(StatCard,{label:"Revenue",value:`\u00a3${totalRevenue.toLocaleString()}`,accent:C.green,sub:"Base fees collected"}),
+        React.createElement(StatCard,{label:"Bonus pots",value:bonusPending,accent:C.amber,sub:"on track to release"}),
+        React.createElement(StatCard,{label:"Released",value:`\u00a3${bonusReleased}`,accent:C.violet,sub:"bonus pot earnings"})
+      ),
+      React.createElement(Cd,{style:{overflow:"hidden",marginBottom:16}},
+        React.createElement("div",{style:{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,fontWeight:700,fontSize:14}},"Active clients"),
+        activeClients.map(cl=>{const pr=programmes.find(p=>p.id===cl.progId);return React.createElement(ListRow,{key:cl.id,left:React.createElement(Avatar,{i:cl.initials,s:30}),title:cl.name,sub:`${pr?.name} - Week ${cl.week}/${pr?.duration}`,right:React.createElement(ProgBar,{current:cl.week,total:pr?.duration||12}),badge:React.createElement(Badge,{status:cl.bonusStatus}),onClick:()=>nav("clients","detail",cl.id)})})
+      ),
+      React.createElement(Cd,{style:{overflow:"hidden"}},
+        React.createElement("div",{style:{padding:"12px 16px",borderBottom:`1px solid ${C.border}`,fontWeight:700,fontSize:14}},"Your programmes"),
+        programmes.map(pr=>{const count=clients.filter(c=>c.progId===pr.id&&c.status==="active").length;return React.createElement(ListRow,{key:pr.id,left:React.createElement(Avatar,{i:"\ud83c\udfcb\ufe0f",s:30,c:"linear-gradient(135deg,#D97706,#F59E0B)"}),title:pr.name,sub:`\u00a3${pr.baseFee+pr.bonusPot} total (\u00a3${pr.bonusPot} bonus pot)`,right:React.createElement("span",{style:{fontSize:13,fontWeight:700}},`${count} active`),onClick:()=>nav("programmes","detail",pr.id)})})
+      )
+    );
+  }
+
+  function ProgrammeDetail(){
+    const pr=programmes.find(p=>p.id===selectedId);if(!pr)return null;
+    const prClients=clients.filter(c=>c.progId===pr.id);
+    return React.createElement("div",null,
+      React.createElement(BackBtn,{onClick:()=>setScreen(null),label:"Programmes"}),
+      React.createElement(Cd,{style:{padding:20,marginBottom:16}},
+        React.createElement("div",{style:{fontSize:18,fontWeight:700,marginBottom:12}},pr.name),
+        React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}},
+          [{l:"Base fee",v:`\u00a3${pr.baseFee}`},{l:"Bonus pot",v:`\u00a3${pr.bonusPot}`},{l:"Total price",v:`\u00a3${pr.baseFee+pr.bonusPot}`},{l:"Duration",v:`${pr.duration} weeks`}].map((item,i)=>React.createElement("div",{key:i,style:{background:C.surface,borderRadius:8,padding:"10px 12px"}},React.createElement("div",{style:{fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:.5,marginBottom:2}},item.l),React.createElement("div",{style:{fontSize:14,fontWeight:600}},item.v)))
+        ),
+        React.createElement("div",{style:{fontSize:13,fontWeight:700,marginBottom:8}},"Bonus pot milestones"),
+        pr.milestones.map((m,i)=>React.createElement("div",{key:i,style:{display:"flex",alignItems:"center",gap:8,padding:"6px 0",fontSize:13,color:C.mid}},React.createElement("span",{style:{color:C.violet,fontWeight:700}},"\u2713"),m)),
+        React.createElement("div",{style:{marginTop:16}},React.createElement(Btn,{primary:true,small:true,onClick:()=>showToast("Checkout link copied to clipboard")},"Copy checkout link"))
+      ),
+      React.createElement("div",{style:{fontSize:14,fontWeight:700,marginBottom:8}},`Clients (${prClients.length})`),
+      React.createElement(Cd,{style:{overflow:"hidden"}},prClients.map(cl=>React.createElement(ListRow,{key:cl.id,left:React.createElement(Avatar,{i:cl.initials,s:30}),title:cl.name,sub:`Week ${cl.week}/${pr.duration}`,badge:React.createElement(Badge,{status:cl.status==="completed"?"completed":cl.bonusStatus}),onClick:()=>nav("clients","detail",cl.id)})))
+    );
+  }
+
+  function ClientDetail(){
+    const cl=clients.find(c=>c.id===selectedId);if(!cl)return null;
+    const pr=programmes.find(p=>p.id===cl.progId);
+    const paidPct=pr?Math.round(cl.paid/(pr.baseFee)*100):0;
+    return React.createElement("div",null,
+      React.createElement(BackBtn,{onClick:()=>setScreen(null),label:"Clients"}),
+      React.createElement(Cd,{style:{padding:20,marginBottom:16}},
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:12,marginBottom:16}},React.createElement(Avatar,{i:cl.initials,s:48}),React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:18,fontWeight:700}},cl.name),React.createElement("div",{style:{fontSize:12,color:C.muted}},`${pr?.name} - Started ${cl.startDate}`)),React.createElement(Badge,{status:cl.status})),
+        React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}},
+          [{l:"Week",v:`${cl.week} of ${pr?.duration}`},{l:"Check-ins",v:`${cl.checkins} of ${pr?.duration}`},{l:"Base paid",v:`\u00a3${cl.paid} of \u00a3${pr?.baseFee}`},{l:"Email",v:cl.email}].map((item,i)=>React.createElement("div",{key:i,style:{background:C.surface,borderRadius:8,padding:"10px 12px"}},React.createElement("div",{style:{fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:.5,marginBottom:2}},item.l),React.createElement("div",{style:{fontSize:13,fontWeight:500,wordBreak:"break-all"}},item.v)))
+        )
+      ),
+      React.createElement(Cd,{style:{padding:16,borderLeft:`3px solid ${cl.bonusStatus==="released"?C.violet:cl.bonusStatus==="at-risk"?C.amber:C.green}`,marginBottom:16}},
+        React.createElement("div",{style:{fontSize:13,fontWeight:700,marginBottom:4}},`Bonus pot: \u00a3${pr?.bonusPot||0}`),
+        React.createElement(Badge,{status:cl.bonusStatus}),
+        React.createElement("div",{style:{marginTop:10}},React.createElement(ProgBar,{current:cl.checkins,total:pr?.duration||12,color:cl.bonusStatus==="at-risk"?C.amber:C.green})),
+        React.createElement("div",{style:{fontSize:11,color:C.muted,marginTop:4}},`${cl.checkins}/${pr?.duration} milestones completed`),
+        cl.bonusStatus==="on-track"&&cl.status==="active"&&React.createElement("div",{style:{marginTop:12}},React.createElement(Btn,{primary:true,small:true,onClick:()=>{setClients(p=>p.map(c=>c.id===cl.id?{...c,bonusStatus:"released",status:"completed",week:pr?.duration}:c));showToast(`\u00a3${pr?.bonusPot} bonus released`)}},"Release bonus pot")),
+        cl.bonusStatus==="released"&&React.createElement("div",{style:{marginTop:8,fontSize:12,color:C.violet,fontWeight:600}},`\u2713 \u00a3${pr?.bonusPot} released to you on completion`)
+      ),
+      React.createElement(Cd,{style:{padding:16}},
+        React.createElement("div",{style:{fontSize:13,fontWeight:700,marginBottom:8}},"Payment timeline"),
+        [{d:"13 Jan",e:`Programme started - \u00a3${Math.round((pr?.baseFee||0)/3)} first instalment`,s:"paid"},{d:"13 Feb",e:`Second instalment - \u00a3${Math.round((pr?.baseFee||0)/3)}`,s:cl.week>=5?"paid":"pending"},{d:"13 Mar",e:`Final instalment - \u00a3${Math.round((pr?.baseFee||0)/3)}`,s:cl.week>=9?"paid":"pending"},{d:"End",e:`Bonus pot - \u00a3${pr?.bonusPot} (on milestone completion)`,s:cl.bonusStatus==="released"?"paid":"pending"}].map((item,i)=>React.createElement("div",{key:i,style:{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<3?`1px solid ${C.border}`:"none"}},React.createElement("div",{style:{width:8,height:8,borderRadius:4,background:item.s==="paid"?C.green:C.border,flexShrink:0}}),React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:12,fontWeight:600}},item.d),React.createElement("div",{style:{fontSize:11,color:C.muted}},item.e)),React.createElement(Badge,{status:item.s})))
+      )
+    );
+  }
+
+  function ClientsList(){
+    return React.createElement("div",null,
+      React.createElement("div",{style:{fontSize:14,fontWeight:700,marginBottom:12}},`All clients (${clients.length})`),
+      React.createElement(Cd,{style:{overflow:"hidden"}},clients.map(cl=>{const pr=programmes.find(p=>p.id===cl.progId);return React.createElement(ListRow,{key:cl.id,left:React.createElement(Avatar,{i:cl.initials,s:32}),title:cl.name,sub:`${pr?.name} - Week ${cl.week}`,right:React.createElement("span",{style:{fontSize:13,fontWeight:700}},`\u00a3${cl.paid}`),badge:React.createElement(Badge,{status:cl.status==="completed"?"completed":cl.bonusStatus}),onClick:()=>{setScreen("detail");setSelectedId(cl.id)}})}))
+    );
+  }
+
+  function BonusPots(){
+    return React.createElement("div",null,
+      React.createElement("div",{style:{fontSize:14,fontWeight:700,marginBottom:4}},"Bonus pots"),
+      React.createElement("div",{style:{fontSize:12,color:C.muted,marginBottom:16}},"Track which clients are on track to earn you the bonus"),
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:10,marginBottom:20}},
+        React.createElement(StatCard,{label:"On track",value:clients.filter(c=>c.bonusStatus==="on-track").length,accent:C.green,sub:`\u00a3${clients.filter(c=>c.bonusStatus==="on-track").reduce((s,c)=>{const p=programmes.find(pr=>pr.id===c.progId);return s+(p?p.bonusPot:0)},0)} potential`}),
+        React.createElement(StatCard,{label:"At risk",value:clients.filter(c=>c.bonusStatus==="at-risk").length,accent:C.amber,sub:"may not complete"}),
+        React.createElement(StatCard,{label:"Released",value:clients.filter(c=>c.bonusStatus==="released").length,accent:C.violet,sub:`\u00a3${bonusReleased} earned`})
+      ),
+      React.createElement(Cd,{style:{overflow:"hidden"}},clients.filter(c=>c.status==="active"||c.bonusStatus==="released").map(cl=>{const pr=programmes.find(p=>p.id===cl.progId);return React.createElement("div",{key:cl.id,style:{padding:"14px 16px",borderBottom:`1px solid ${C.border}`}},React.createElement("div",{style:{display:"flex",alignItems:"center",gap:10,marginBottom:8}},React.createElement(Avatar,{i:cl.initials,s:28}),React.createElement("div",{style:{flex:1}},React.createElement("div",{style:{fontSize:13,fontWeight:600}},cl.name),React.createElement("div",{style:{fontSize:11,color:C.muted}},pr?.name)),React.createElement("span",{style:{fontSize:14,fontWeight:700}},`\u00a3${pr?.bonusPot}`),React.createElement(Badge,{status:cl.bonusStatus})),React.createElement(ProgBar,{current:cl.checkins,total:pr?.duration||12,color:cl.bonusStatus==="at-risk"?C.amber:cl.bonusStatus==="released"?C.violet:C.green}),React.createElement("div",{style:{fontSize:11,color:C.muted,marginTop:4}},`${cl.checkins}/${pr?.duration} milestones - ${cl.bonusStatus==="released"?"Bonus released":cl.bonusStatus==="at-risk"?"Needs attention":"On track"}`))})
+      )
+    );
+  }
+
+  function AccountPage(){
+    return React.createElement("div",null,
+      React.createElement(Cd,{style:{padding:16,marginBottom:16,display:"flex",alignItems:"center",gap:12}},React.createElement(Avatar,{i:"JF",s:48}),React.createElement("div",null,React.createElement("div",{style:{fontSize:16,fontWeight:700}},"Jake Fitness"),React.createElement("div",{style:{fontSize:12,color:C.muted}},"Online Coach - 6 active clients"))),
+      React.createElement(Cd,{style:{overflow:"hidden"}},[{icon:"\ud83d\udc64",l:"Coach profile",s:"Name, bio, specialisms"},{icon:"\ud83d\udcb3",l:"Payout settings",s:"Bank account, payout schedule"},{icon:"\ud83d\udd14",l:"Notifications",s:"Payment alerts, milestone reminders"},{icon:"\ud83c\udfa8",l:"Branding",s:"Checkout colours, logo"}].map((item,i)=>React.createElement(ListRow,{key:i,left:React.createElement("span",{style:{fontSize:20,width:32,textAlign:"center"}},item.icon),title:item.l,sub:item.s,onClick:()=>showToast("Settings - coming in full build")}))),
+      React.createElement("button",{style:{display:"block",margin:"20px auto",background:"none",border:"none",color:C.red,fontSize:13,fontWeight:600,cursor:"pointer"}},"Sign out")
+    );
+  }
+
+  let content;
+  if(tab==="home")content=React.createElement(Home);
+  else if(tab==="programmes"&&screen==="detail")content=React.createElement(ProgrammeDetail);
+  else if(tab==="programmes")content=React.createElement("div",null,React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}},React.createElement("span",{style:{fontSize:14,fontWeight:700}},"Programmes"),React.createElement(Btn,{primary:true,small:true,onClick:()=>showToast("Programme builder - coming in full build")},"+ New programme")),React.createElement(Cd,{style:{overflow:"hidden"}},programmes.map(pr=>{const count=clients.filter(c=>c.progId===pr.id&&c.status==="active").length;return React.createElement(ListRow,{key:pr.id,left:React.createElement(Avatar,{i:"\ud83c\udfcb\ufe0f",s:34,c:"linear-gradient(135deg,#D97706,#F59E0B)"}),title:pr.name,sub:`\u00a3${pr.baseFee+pr.bonusPot} (\u00a3${pr.bonusPot} bonus) - ${pr.duration} weeks`,right:React.createElement("span",{style:{fontSize:13,fontWeight:700}},`${count} active`),badge:React.createElement(Badge,{status:"active"}),onClick:()=>{setScreen("detail");setSelectedId(pr.id)}})})));
+  else if(tab==="clients"&&screen==="detail")content=React.createElement(ClientDetail);
+  else if(tab==="clients")content=React.createElement(ClientsList);
+  else if(tab==="bonus")content=React.createElement(BonusPots);
+  else if(tab==="account")content=React.createElement(AccountPage);
+
+  return React.createElement("div",{style:{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column"}},
+    React.createElement("div",{style:{background:C.card,borderBottom:`1px solid ${C.border}`,padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}},React.createElement("div",{style:{fontSize:18,fontWeight:700}},React.createElement("span",{style:{color:C.violet}},"Fit"),"Pay"),React.createElement("div",{style:{display:"flex",alignItems:"center",gap:8}},React.createElement("div",{style:{textAlign:"right"}},React.createElement("div",{style:{fontSize:12,fontWeight:600}},"Jake Fitness"),React.createElement("div",{style:{fontSize:10,color:C.muted}},`${activeClients.length} active clients`)),React.createElement(Avatar,{i:"JF",s:30}))),
+    React.createElement(TabBar,{tabs,active:tab,onSelect:t=>{setTab(t);setScreen(null);setSelectedId(null)}}),
+    React.createElement("div",{style:{flex:1,padding:"16px 16px 24px",maxWidth:640,margin:"0 auto",width:"100%"}},content),
+    React.createElement("div",{style:{background:C.card,borderTop:`1px solid ${C.border}`,padding:"16px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}},React.createElement("span",{style:{fontSize:12,color:C.muted}},"\u00a9 2026 FitPay"),React.createElement("div",{style:{display:"flex",gap:16}},React.createElement("a",{href:"mailto:hello@fitpay.co.uk",style:{fontSize:12,color:C.violet,textDecoration:"none",fontWeight:500}},"Contact us"),React.createElement("a",{href:"#",style:{fontSize:12,color:C.muted,textDecoration:"none"}},"Privacy"),React.createElement("a",{href:"#",style:{fontSize:12,color:C.muted,textDecoration:"none"}},"Terms"))),
+    toast&&React.createElement(Toast,{message:toast,onClose:()=>setToast(null)})
+  );
+};
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(window.__App));
+</script>
+</body>
+</html>
