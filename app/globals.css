@@ -14,6 +14,9 @@
   --amber-light: #FEF3C7;
   --green: #16A34A;
   --green-light: #F0FDF4;
+  --red: #DC2626;
+  --red-light: #FEF2F2;
+  --surface: #F0EDE8;
   --border: #E8E3DA;
   --white: #FFFFFF;
   --radius: 14px;
@@ -37,6 +40,9 @@
   --color-amber-light: var(--amber-light);
   --color-green: var(--green);
   --color-green-light: var(--green-light);
+  --color-red: var(--red);
+  --color-red-light: var(--red-light);
+  --color-surface: var(--surface);
   --color-border: var(--border);
   --font-sans: var(--font-dm-sans), 'DM Sans', sans-serif;
   --font-serif: var(--font-fraunces), 'Fraunces', serif;
