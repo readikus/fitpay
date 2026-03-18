@@ -19,7 +19,10 @@ const AuthSchema = z.object({
 
 type AuthInput = z.infer<typeof AuthSchema>;
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4050";
+function getAppUrl() {
+  if (typeof window !== "undefined") return window.location.origin;
+  return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4050";
+}
 
 function GoogleIcon() {
   return (
@@ -59,7 +62,7 @@ function AuthForm() {
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(returnTo)}`,
+        redirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(returnTo)}`,
       },
     });
 
@@ -90,7 +93,7 @@ function AuthForm() {
       email: data.email,
       password: data.password,
       options: {
-        emailRedirectTo: `${appUrl}/auth/callback?next=${encodeURIComponent(returnTo)}`,
+        emailRedirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(returnTo)}`,
       },
     });
 
