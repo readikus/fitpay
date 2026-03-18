@@ -44,7 +44,8 @@ export default async function ProgrammesPage() {
       ) : (
         <div className="mt-6 grid gap-4">
           {programmes.map((p: any) => (
-            <Card key={p.id} className="hover:border-violet hover:shadow-[0_4px_16px_rgba(124,58,237,0.08)]">
+            <Link key={p.id} href={`/programmes/${p.id}`}>
+            <Card className="hover:border-violet hover:shadow-[0_4px_16px_rgba(124,58,237,0.08)]">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{p.name}</CardTitle>
@@ -73,6 +74,7 @@ export default async function ProgrammesPage() {
                 )}
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
       )}

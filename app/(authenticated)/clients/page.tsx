@@ -66,8 +66,10 @@ export default async function ClientsPage() {
               <tbody className="divide-y divide-border">
                 {clients.map((c: any) => (
                   <tr key={c.id} className="transition-colors hover:bg-warm">
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-text">
-                      {c.first_name} {c.last_name}
+                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                      <Link href={`/clients/${c.id}`} className="text-violet hover:text-violet-dark">
+                        {c.first_name} {c.last_name}
+                      </Link>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">{c.email}</td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">

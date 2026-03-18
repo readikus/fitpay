@@ -166,7 +166,7 @@ export default async function DashboardPage() {
     ),
     pool.query(
       `SELECT c.id, c.first_name, c.last_name,
-              e.start_date, e.status as enrollment_status,
+              e.id as enrollment_id, e.start_date, e.status as enrollment_status,
               p.name as programme_name, p.duration_weeks,
               bp.status as bonus_status
        FROM enrollments e
@@ -250,9 +250,10 @@ export default async function DashboardPage() {
               bonusDisplay === "at-risk" ? "var(--amber)" : "var(--violet)";
 
             return (
-              <div
-                key={cl.id}
-                className="flex items-center gap-2.5 border-b border-border px-4 py-3 last:border-b-0"
+              <Link
+                key={cl.enrollment_id}
+                href={`/enrollments/${cl.enrollment_id}`}
+                className="flex items-center gap-2.5 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-warm"
               >
                 <Avatar initials={initials} size={30} />
                 <div className="min-w-0 flex-1">
@@ -271,7 +272,7 @@ export default async function DashboardPage() {
                   />
                 </div>
                 <Badge status={bonusDisplay} />
-              </div>
+              </Link>
             );
           })
         )}
