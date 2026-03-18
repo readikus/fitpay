@@ -9,7 +9,7 @@ const globalForPool = globalThis as unknown as { __pgPool?: Pool };
 function createPool(): Pool {
   const p = new Pool({
     connectionString: process.env.DATABASE_URL,
-    max: process.env.NODE_ENV === "production" ? 10 : 3,
+    max: process.env.NODE_ENV === "production" ? 3 : 3,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
     ssl: {
