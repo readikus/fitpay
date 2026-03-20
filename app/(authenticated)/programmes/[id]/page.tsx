@@ -4,6 +4,7 @@ import { pool } from "@/providers/database/pool";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CopyLink } from "@/components/copy-link";
 
 export default async function ProgrammeDetailPage({
   params,
@@ -40,6 +41,8 @@ export default async function ProgrammeDetailPage({
   const programme = programmeResult.rows[0];
   const milestones = milestonesResult.rows;
   const enrollments = enrollmentsResult.rows;
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4050";
 
   const statusStyles: Record<string, string> = {
     ACTIVE: "bg-green-light text-green",
@@ -179,26 +182,41 @@ export default async function ProgrammeDetailPage({
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Status</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Start</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">End</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {enrollments.map((e: any) => (
-                    <tr key={e.id} className="transition-colors hover:bg-warm">
+                    <tr key={e.id} className="cursor-pointer transition-colors hover:bg-warm" onClick={undefined}>
                       <td className="px-4 py-2.5">
-                        <Link href={`/clients/${e.client_id}`} className="text-sm font-medium text-violet hover:text-violet-dark">
+                        <Link href={`/enrollments/${e.id}`} className="block text-sm font-medium text-text">
                           {e.first_name} {e.last_name}
                         </Link>
                       </td>
                       <td className="px-4 py-2.5">
-                        <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${enrollmentStatusStyles[e.status] || ""}`}>
-                          {e.status.replace("_", " ")}
-                        </span>
+                        <Link href={`/enrollments/${e.id}`} className="block">
+                          <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${enrollmentStatusStyles[e.status] || ""}`}>
+                            {e.status.replace("_", " ")}
+                          </span>
+                        </Link>
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-mid">
-                        {new Date(e.start_date).toLocaleDateString("en-GB")}
+                      <td className="px-4 py-2.5">
+                        <Link href={`/enrollments/${e.id}`} className="block text-sm text-mid">
+                          {new Date(e.start_date).toLocaleDateString("en-GB")}
+                        </Link>
                       </td>
-                      <td className="px-4 py-2.5 text-sm text-mid">
-                        {new Date(e.end_date).toLocaleDateString("en-GB")}
+                      <td className="px-4 py-2.5">
+                        <Link href={`/enrollments/${e.id}`} className="block text-sm text-mid">
+                          {new Date(e.end_date).toLocaleDateString("en-GB")}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <Link
+                          href={`/enrollments/${e.id}`}
+                          className="rounded-[8px] bg-violet px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-violet-dark"
+                        >
+                          View details
+                        </Link>
                       </td>
                     </tr>
                   ))}

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { MilestoneReview } from "./milestone-review";
 import { AttendanceForm } from "./attendance-form";
 import { EnrollmentActions } from "./enrollment-actions";
+import { CopyLink } from "@/components/copy-link";
 
 function getCurrentWeek(startDate: string): number {
   const start = new Date(startDate);
@@ -151,7 +152,7 @@ export default async function EnrollmentDetailPage({
               <p className="text-sm font-semibold text-amber">Awaiting payment</p>
               <p className="mt-0.5 text-xs text-mid">Share this link with your client to collect their first payment.</p>
             </div>
-            <code className="rounded-[8px] bg-white px-3 py-1.5 text-xs text-text">{appUrl}/checkout/{id}</code>
+            <CopyLink url={`${appUrl}/checkout/${id}`} />
           </div>
         </div>
       )}
@@ -376,6 +377,9 @@ export default async function EnrollmentDetailPage({
                       <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${paymentStatusStyles[p.status] || ""}`}>
                         {p.status}
                       </span>
+                      {p.status !== "PAID" && p.status !== "REFUNDED" && (
+                        <CopyLink url={`${appUrl}/checkout/${id}`} label="Copy checkout" />
+                      )}
                     </div>
                   </div>
                 );

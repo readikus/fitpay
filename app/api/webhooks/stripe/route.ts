@@ -53,33 +53,43 @@ export async function POST(request: NextRequest) {
 }
 
 async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
-  await pool.query(
-    `UPDATE payments SET status = 'PAID', paid_at = now()
-     WHERE stripe_payment_intent_id = $1`,
-    [paymentIntent.id],
-  );
+  const fitpayPaymentId = paymentIntent.metadata?.fitpay_payment_id;
+  const fitpayEnrollmentId = paymentIntent.metadata?.fitpay_enrollment_id;
 
-  // Update enrollment status if this is the first payment
-  const result = await pool.query(
-    `SELECT enrollment_id FROM payments WHERE stripe_payment_intent_id = $1`,
-    [paymentIntent.id],
-  );
+  // Try metadata first (reliable), fall back to stripe_payment_intent_id
+  const result = fitpayPaymentId
+    ? await pool.query(
+        `UPDATE payments SET status = 'PAID', paid_at = now(), stripe_payment_intent_id = $1
+         WHERE id = $2 AND status IN ('PENDING', 'SCHEDULED')
+         RETURNING enrollment_id`,
+        [paymentIntent.id, fitpayPaymentId],
+      )
+    : await pool.query(
+        `UPDATE payments SET status = 'PAID', paid_at = now()
+         WHERE stripe_payment_intent_id = $1
+         RETURNING enrollment_id`,
+        [paymentIntent.id],
+      );
 
-  if (result.rows.length > 0) {
+  // Activate enrollment if this is the first payment
+  const enrollmentId = result.rows[0]?.enrollment_id || fitpayEnrollmentId;
+  if (enrollmentId) {
     await pool.query(
       `UPDATE enrollments SET status = 'ACTIVE', updated_at = now()
        WHERE id = $1 AND status = 'PENDING_PAYMENT'`,
-      [result.rows[0].enrollment_id],
+      [enrollmentId],
     );
   }
 }
 
 async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
-  await pool.query(
-    `UPDATE payments SET status = 'FAILED'
-     WHERE stripe_payment_intent_id = $1`,
-    [paymentIntent.id],
-  );
+  const fitpayPaymentId = paymentIntent.metadata?.fitpay_payment_id;
+
+  if (fitpayPaymentId) {
+    await pool.query("UPDATE payments SET status = 'FAILED' WHERE id = $1", [fitpayPaymentId]);
+  } else {
+    await pool.query("UPDATE payments SET status = 'FAILED' WHERE stripe_payment_intent_id = $1", [paymentIntent.id]);
+  }
 }
 
 async function handleAccountUpdate(account: Stripe.Account) {

@@ -4,6 +4,7 @@ import { pool } from "@/providers/database/pool";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CopyLink } from "@/components/copy-link";
 
 export default async function ClientDetailPage({
   params,
@@ -33,7 +34,7 @@ export default async function ClientDetailPage({
     ),
     pool.query(
       `SELECT pay.id, pay.amount, pay.currency, pay.type, pay.status, pay.scheduled_date, pay.paid_at,
-              p.name as programme_name
+              pay.enrollment_id, p.name as programme_name, e.status as enrollment_status
        FROM payments pay
        JOIN enrollments e ON e.id = pay.enrollment_id
        JOIN programmes p ON p.id = e.programme_id
@@ -157,8 +158,8 @@ export default async function ClientDetailPage({
                   </div>
                   {e.status === "PENDING_PAYMENT" && (
                     <div className="mt-3 rounded-[8px] bg-amber-light px-3 py-2 text-sm">
-                      <span className="font-semibold text-amber">Checkout link: </span>
-                      <code className="text-xs text-text">{appUrl}/checkout/{e.id}</code>
+                      <span className="mb-1.5 block font-semibold text-amber">Checkout link</span>
+                      <CopyLink url={`${appUrl}/checkout/${e.id}`} />
                     </div>
                   )}
                 </Link>
@@ -185,6 +186,7 @@ export default async function ClientDetailPage({
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Type</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Amount</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Status</th>
+                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -207,6 +209,11 @@ export default async function ClientDetailPage({
                         <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${paymentStatusStyles[p.status] || ""}`}>
                           {p.status}
                         </span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        {p.status !== "PAID" && p.status !== "REFUNDED" && (
+                          <CopyLink url={`${appUrl}/checkout/${p.enrollment_id}`} label="Copy checkout" />
+                        )}
                       </td>
                     </tr>
                   ))}

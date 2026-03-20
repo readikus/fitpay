@@ -59,10 +59,14 @@ function AuthForm() {
     setGoogleLoading(true);
     const supabase = createBrowserClient();
 
+    // Store returnTo so the callback can redirect after OAuth completes.
+    // Don't put query params in redirectTo — Supabase matches it against the allowlist exactly.
+    sessionStorage.setItem("returnTo", returnTo);
+
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(returnTo)}`,
+        redirectTo: `${getAppUrl()}/auth/callback`,
       },
     });
 
@@ -93,7 +97,7 @@ function AuthForm() {
       email: data.email,
       password: data.password,
       options: {
-        emailRedirectTo: `${getAppUrl()}/auth/callback?next=${encodeURIComponent(returnTo)}`,
+        emailRedirectTo: `${getAppUrl()}/auth/callback`,
       },
     });
 

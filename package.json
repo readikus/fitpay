@@ -10,7 +10,8 @@
     "tsc": "tsc --noEmit",
     "migrate:up": "dotenv -e .env.local -- knex migrate:up --knexfile knexfile.ts",
     "migrate:down": "dotenv -e .env.local -- knex migrate:down --knexfile knexfile.ts",
-    "migrate:status": "dotenv -e .env.local -- knex migrate:status --knexfile knexfile.ts"
+    "migrate:status": "dotenv -e .env.local -- knex migrate:status --knexfile knexfile.ts",
+    "stripe": "stripe listen --forward-to localhost:4050/api/webhooks/stripe"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

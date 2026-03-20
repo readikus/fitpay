@@ -2,6 +2,7 @@ import { getAuthenticatedUser } from "@/providers/supabase/auth-helpers";
 import { redirect } from "next/navigation";
 import { pool } from "@/providers/database/pool";
 import { Card, CardContent } from "@/components/ui/card";
+import { CopyLink } from "@/components/copy-link";
 
 export default async function PaymentsPage() {
   const user = await getAuthenticatedUser();
@@ -38,6 +39,7 @@ export default async function PaymentsPage() {
 
   const payments = paymentsResult.rows;
   const stats = statsResult.rows[0];
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4050";
 
   const paymentStatusStyles: Record<string, string> = {
     PAID: "bg-green-light text-green",
@@ -91,6 +93,7 @@ export default async function PaymentsPage() {
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Type</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Amount</th>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -117,6 +120,11 @@ export default async function PaymentsPage() {
                     <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${paymentStatusStyles[p.status] || ""}`}>
                       {p.status}
                     </span>
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4">
+                    {p.status !== "PAID" && p.status !== "REFUNDED" && (
+                      <CopyLink url={`${appUrl}/checkout/${p.enrollment_id}`} label="Copy checkout" />
+                    )}
                   </td>
                 </tr>
               ))}
