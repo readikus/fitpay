@@ -63,7 +63,52 @@ export default function NewEnrollmentPage() {
     load();
   }, []);
 
+  const [showNewClient, setShowNewClient] = useState(false);
+  const [newFirstName, setNewFirstName] = useState("");
+  const [newLastName, setNewLastName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+  const [creatingClient, setCreatingClient] = useState(false);
+
   const selectedProgramme = programmes.find((p) => p.id === programmeId);
+
+  async function handleCreateClient() {
+    if (!newFirstName || !newLastName || !newEmail) return;
+    setCreatingClient(true);
+    setServerError(null);
+
+    try {
+      const res = await fetch("/api/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: newFirstName,
+          lastName: newLastName,
+          email: newEmail,
+          phone: newPhone || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json();
+        setServerError(body.error || "Failed to create client");
+        return;
+      }
+
+      const { client } = await res.json();
+      setClients((prev) => [...prev, client]);
+      setClientId(client.id);
+      setShowNewClient(false);
+      setNewFirstName("");
+      setNewLastName("");
+      setNewEmail("");
+      setNewPhone("");
+    } catch {
+      setServerError("Failed to create client");
+    } finally {
+      setCreatingClient(false);
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -148,20 +193,55 @@ export default function NewEnrollmentPage() {
               </div>
 
               <div>
-                <Label htmlFor="clientId">Client</Label>
-                <select
-                  id="clientId"
-                  value={clientId}
-                  onChange={(e) => setClientId(e.target.value)}
-                  className="flex w-full rounded-[12px] border border-border bg-white px-3 py-2 text-sm text-text focus:border-violet focus:outline-none focus:ring-1 focus:ring-violet"
-                >
-                  <option value="">Select a client</option>
-                  {clients.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.first_name} {c.last_name} ({c.email})
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="clientId">Client</Label>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewClient(!showNewClient)}
+                    className="text-xs font-semibold text-violet hover:text-violet-dark"
+                  >
+                    {showNewClient ? "Cancel" : "+ Add new client"}
+                  </button>
+                </div>
+                {showNewClient ? (
+                  <div className="mt-2 space-y-3 rounded-[12px] border border-border bg-warm p-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="newFirstName">First name</Label>
+                        <Input id="newFirstName" value={newFirstName} onChange={(e) => setNewFirstName(e.target.value)} placeholder="John" />
+                      </div>
+                      <div>
+                        <Label htmlFor="newLastName">Last name</Label>
+                        <Input id="newLastName" value={newLastName} onChange={(e) => setNewLastName(e.target.value)} placeholder="Smith" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="newEmail">Email</Label>
+                      <Input id="newEmail" type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="john@example.com" />
+                    </div>
+                    <div>
+                      <Label htmlFor="newPhone">Phone (optional)</Label>
+                      <Input id="newPhone" type="tel" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} placeholder="07..." />
+                    </div>
+                    <Button type="button" onClick={handleCreateClient} disabled={creatingClient || !newFirstName || !newLastName || !newEmail}>
+                      {creatingClient ? "Creating..." : "Create client"}
+                    </Button>
+                  </div>
+                ) : (
+                  <select
+                    id="clientId"
+                    value={clientId}
+                    onChange={(e) => setClientId(e.target.value)}
+                    className="mt-2 flex w-full rounded-[12px] border border-border bg-white px-3 py-2 text-sm text-text focus:border-violet focus:outline-none focus:ring-1 focus:ring-violet"
+                  >
+                    <option value="">Select a client</option>
+                    {clients.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.first_name} {c.last_name} ({c.email})
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>
