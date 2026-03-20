@@ -22,14 +22,14 @@ export default async function ProgrammesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-serif text-2xl font-bold text-text">Programmes</h1>
           <p className="mt-1 text-mid">Manage your coaching programmes</p>
         </div>
         <Link
           href="/programmes/new"
-          className="rounded-[12px] bg-violet px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all hover:-translate-y-0.5 hover:bg-violet-dark"
+          className="w-fit rounded-[12px] bg-violet px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all hover:-translate-y-0.5 hover:bg-violet-dark"
         >
           Create programme
         </Link>
@@ -63,7 +63,7 @@ export default async function ProgrammesPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex gap-6 text-sm text-mid">
+                <div className="flex flex-wrap gap-3 text-sm text-mid md:gap-6">
                   <span>{p.duration_weeks} weeks</span>
                   <span>Base: £{(p.base_fee_amount / 100).toFixed(2)}</span>
                   <span>Bonus pot: £{(p.bonus_pot_amount / 100).toFixed(2)}</span>

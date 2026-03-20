@@ -84,7 +84,7 @@ export default async function ClientDetailPage({
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-serif text-2xl font-bold text-text">
             {client.first_name} {client.last_name}
@@ -94,7 +94,7 @@ export default async function ClientDetailPage({
         </div>
         <Link
           href={`/enrollments/new?clientId=${id}`}
-          className="rounded-[12px] bg-violet px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all hover:-translate-y-0.5 hover:bg-violet-dark"
+          className="w-fit rounded-[12px] bg-violet px-4 py-2 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all hover:-translate-y-0.5 hover:bg-violet-dark"
         >
           Enrol in programme
         </Link>
@@ -182,17 +182,17 @@ export default async function ClientDetailPage({
               <table className="min-w-full divide-y divide-border">
                 <thead className="bg-warm">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Date</th>
+                    <th className="hidden px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell">Date</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Type</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Amount</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Status</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted"></th>
+                    <th className="hidden px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {payments.map((p: any) => (
                     <tr key={p.id} className="transition-colors hover:bg-warm">
-                      <td className="px-4 py-2.5 text-sm text-mid">
+                      <td className="hidden px-4 py-2.5 text-sm text-mid md:table-cell">
                         {p.paid_at
                           ? new Date(p.paid_at).toLocaleDateString("en-GB")
                           : p.scheduled_date
@@ -210,7 +210,7 @@ export default async function ClientDetailPage({
                           {p.status}
                         </span>
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td className="hidden px-4 py-2.5 md:table-cell">
                         {p.status !== "PAID" && p.status !== "REFUNDED" && (
                           <CopyLink url={`${appUrl}/checkout/${p.enrollment_id}`} label="Copy checkout" />
                         )}

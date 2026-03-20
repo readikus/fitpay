@@ -84,52 +84,54 @@ export default async function PaymentsPage() {
         </Card>
       ) : (
         <div className="mt-6 overflow-hidden rounded-[14px] border border-border bg-white">
-          <table className="min-w-full divide-y divide-border">
-            <thead className="bg-warm">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Client</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Programme</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {payments.map((p: any) => (
-                <tr key={p.id} className="transition-colors hover:bg-warm">
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">
-                    {p.paid_at
-                      ? new Date(p.paid_at).toLocaleDateString("en-GB")
-                      : p.scheduled_date
-                        ? new Date(p.scheduled_date).toLocaleDateString("en-GB")
-                        : "—"}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-text">
-                    {p.client_first_name} {p.client_last_name}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">{p.programme_name}</td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">
-                    {p.type === "BASE_FEE" ? "Instalment" : p.type === "BONUS_POT" ? "Bonus pot" : "Platform fee"}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-text">
-                    £{(p.amount / 100).toFixed(2)}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${paymentStatusStyles[p.status] || ""}`}>
-                      {p.status}
-                    </span>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4">
-                    {p.status !== "PAID" && p.status !== "REFUNDED" && (
-                      <CopyLink url={`${appUrl}/checkout/${p.enrollment_id}`} label="Copy checkout" />
-                    )}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-warm">
+                <tr>
+                  <th className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted lg:table-cell">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:px-6">Client</th>
+                  <th className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted lg:table-cell">Programme</th>
+                  <th className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:px-6">Amount</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:px-6">Status</th>
+                  <th className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {payments.map((p: any) => (
+                  <tr key={p.id} className="transition-colors hover:bg-warm">
+                    <td className="hidden whitespace-nowrap px-6 py-4 text-sm text-mid lg:table-cell">
+                      {p.paid_at
+                        ? new Date(p.paid_at).toLocaleDateString("en-GB")
+                        : p.scheduled_date
+                          ? new Date(p.scheduled_date).toLocaleDateString("en-GB")
+                          : "—"}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-text md:px-6">
+                      {p.client_first_name} {p.client_last_name}
+                    </td>
+                    <td className="hidden whitespace-nowrap px-6 py-4 text-sm text-mid lg:table-cell">{p.programme_name}</td>
+                    <td className="hidden whitespace-nowrap px-6 py-4 text-sm text-mid md:table-cell">
+                      {p.type === "BASE_FEE" ? "Instalment" : p.type === "BONUS_POT" ? "Bonus pot" : "Platform fee"}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-text md:px-6">
+                      £{(p.amount / 100).toFixed(2)}
+                    </td>
+                    <td className="whitespace-nowrap px-4 py-4 md:px-6">
+                      <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${paymentStatusStyles[p.status] || ""}`}>
+                        {p.status}
+                      </span>
+                    </td>
+                    <td className="hidden whitespace-nowrap px-6 py-4 md:table-cell">
+                      {p.status !== "PAID" && p.status !== "REFUNDED" && (
+                        <CopyLink url={`${appUrl}/checkout/${p.enrollment_id}`} label="Copy checkout" />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

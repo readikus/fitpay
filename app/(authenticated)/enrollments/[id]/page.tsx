@@ -113,9 +113,9 @@ export default async function EnrollmentDetailPage({
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <h1 className="font-serif text-2xl font-bold text-text">
               {enrollment.client_first_name} {enrollment.client_last_name}
             </h1>
@@ -123,7 +123,7 @@ export default async function EnrollmentDetailPage({
               {enrollment.status.replace("_", " ")}
             </span>
           </div>
-          <p className="mt-1 text-mid">
+          <p className="mt-1 text-sm text-mid sm:text-base">
             <Link href={`/programmes/${enrollment.programme_id}`} className="hover:text-violet">
               {enrollment.programme_name}
             </Link>
@@ -147,7 +147,7 @@ export default async function EnrollmentDetailPage({
       {/* Checkout link for pending enrollments */}
       {enrollment.status === "PENDING_PAYMENT" && (
         <div className="mt-4 rounded-[12px] bg-amber-light px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold text-amber">Awaiting payment</p>
               <p className="mt-0.5 text-xs text-mid">Share this link with your client to collect their first payment.</p>

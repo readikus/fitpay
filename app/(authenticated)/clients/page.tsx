@@ -24,14 +24,14 @@ export default async function ClientsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-serif text-2xl font-bold text-text">Clients</h1>
           <p className="mt-1 text-mid">Manage your coaching clients</p>
         </div>
         <Link
           href="/clients/new"
-          className="rounded-[12px] bg-violet px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all hover:-translate-y-0.5 hover:bg-violet-dark"
+          className="w-fit rounded-[12px] bg-violet px-6 py-2.5 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all hover:-translate-y-0.5 hover:bg-violet-dark"
         >
           Add client
         </Link>
@@ -49,33 +49,33 @@ export default async function ClientsPage() {
             <table className="min-w-full divide-y divide-border">
               <thead className="bg-warm">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:px-6">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">
+                  <th className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">
+                  <th className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted lg:table-cell">
                     Phone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted">
-                    Active Programmes
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted md:px-6">
+                    Active
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {clients.map((c: any) => (
                   <tr key={c.id} className="transition-colors hover:bg-warm">
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                    <td className="whitespace-nowrap px-4 py-4 text-sm font-medium md:px-6">
                       <Link href={`/clients/${c.id}`} className="text-violet hover:text-violet-dark">
                         {c.first_name} {c.last_name}
                       </Link>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">{c.email}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">
+                    <td className="hidden whitespace-nowrap px-6 py-4 text-sm text-mid md:table-cell">{c.email}</td>
+                    <td className="hidden whitespace-nowrap px-6 py-4 text-sm text-mid lg:table-cell">
                       {c.phone || "—"}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-mid">
+                    <td className="whitespace-nowrap px-4 py-4 text-sm text-mid md:px-6">
                       {c.active_enrollments}
                     </td>
                   </tr>

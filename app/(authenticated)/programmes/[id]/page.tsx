@@ -70,7 +70,7 @@ export default async function ProgrammeDetailPage({
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="font-serif text-2xl font-bold text-text">{programme.name}</h1>
@@ -180,9 +180,9 @@ export default async function ProgrammeDetailPage({
                   <tr>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Client</th>
                     <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Status</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">Start</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted">End</th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted"></th>
+                    <th className="hidden px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell">Start</th>
+                    <th className="hidden px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell">End</th>
+                    <th className="hidden px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-muted md:table-cell"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -200,17 +200,17 @@ export default async function ProgrammeDetailPage({
                           </span>
                         </Link>
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td className="hidden px-4 py-2.5 md:table-cell">
                         <Link href={`/enrollments/${e.id}`} className="block text-sm text-mid">
                           {new Date(e.start_date).toLocaleDateString("en-GB")}
                         </Link>
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td className="hidden px-4 py-2.5 md:table-cell">
                         <Link href={`/enrollments/${e.id}`} className="block text-sm text-mid">
                           {new Date(e.end_date).toLocaleDateString("en-GB")}
                         </Link>
                       </td>
-                      <td className="px-4 py-2.5">
+                      <td className="hidden px-4 py-2.5 md:table-cell">
                         <Link
                           href={`/enrollments/${e.id}`}
                           className="rounded-[8px] bg-violet px-3 py-1.5 text-xs font-semibold text-white transition-all hover:bg-violet-dark"
